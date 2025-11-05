@@ -21,6 +21,9 @@ x0_true = np.array([z0, z_dot0])
 x0_hat = np.array([[0.0], [0.0]])
 P0 = 0.1 * np.eye(2)
 
+INNOVATION_THRESHOLD = 9.0
+P_RESET_VALUE = 0.1 * np.eye(2)
+
 # Noise Characteristics
 measurement_noise_var = 0.01
 R_k = np.array([[measurement_noise_var]])
@@ -50,4 +53,10 @@ lambda_min = 0.5
 lambda_max = 1.0
 eps = 1e-6
 
+RESET_INNOVATION_THRESHOLD = 9.0
+VELOCITY_UNCERTAINTY_INJECTION = 0.1
+Q_INJECTION_MATRIX = np.array([
+    [0.0, 0.0],
+    [0.0, VELOCITY_UNCERTAINTY_INJECTION]
+])
 

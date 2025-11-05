@@ -1,7 +1,7 @@
 import numpy as np
 import config as cfg
 from simulation import run_ground_truth_simulation
-from filters import StandardKF, AdaptiveKF
+from filters import StandardKF, AdaptiveKF, TargetedInjectionKF
 from plot import plot_all_figures
 
 def main():
@@ -15,6 +15,7 @@ def main():
     # Initialize filters
     kf = StandardKF(cfg.x0_hat, cfg.P0)
     kfs = AdaptiveKF(cfg.x0_hat, cfg.P0)
+    tikf = TargetedInjectionKF(cfg.x0_hat, cfg.P0)
 
     # Prepare storage for results
     x_hat_kf_hist = np.zeros((cfg.n_states, num_steps))
@@ -24,12 +25,18 @@ def main():
     P_kfs_hist = np.zeros((num_steps, cfg.n_states, cfg.n_states))
     lambda_k_hist = np.zeros(num_steps)
 
+    x_hat_tikf_hist = np.zeros((cfg.n_states, num_steps))
+    P_tikf_hist = np.zeros((num_steps, cfg.n_states, cfg.n_states))
+    injection_log_hist = np.zeros(num_steps)
+
     # Set initial values
     x_hat_kf_hist[:, 0] = kf.x_hat.flatten()
     P_kf_hist[0, :, :] = kf.P
     x_hat_kfs_hist[:, 0] = kfs.x_hat.flatten()
     P_kfs_hist[0, :, :] = kfs.P
     lambda_k_hist[0] = kfs.lambda_k
+    x_hat_tikf_hist[:, 0] = tikf.x_hat.flatten()
+    P_tikf_hist[0, :, :] = tikf.P
     
     print("Running filters...")
     # Main loop
@@ -44,13 +51,18 @@ def main():
         P_kf_hist[k+1, :, :] = kf.P
         
         # Adaptive KF
-        # Note: This adaptive lambda calculation uses the measurement from the 'current' step,
-        # as it is not very clear from the paper.
         kfs.predict(u_k, y_k)
         kfs.update(y_k)
         x_hat_kfs_hist[:, k+1] = kfs.x_hat.flatten()
         P_kfs_hist[k+1, :, :] = kfs.P
         lambda_k_hist[k+1] = kfs.lambda_k
+
+        # Covariance Reseting KF
+        tikf.predict(u_k)
+        tikf.update(y_k)
+        x_hat_tikf_hist[:, k+1] = tikf.x_hat.flatten()
+        P_tikf_hist[k+1, :, :] = tikf.P
+        injection_log_hist[k+1] = tikf.injection_log[-1]
         
     print("Simulation complete. Generating plots...")
     results = {
@@ -61,6 +73,9 @@ def main():
         'x_kfs': x_hat_kfs_hist,
         'P_kfs': P_kfs_hist,
         'lambda_k': lambda_k_hist,
+        'x_tikf': x_hat_tikf_hist,
+        'P_tikf': P_tikf_hist,
+        'injection_log': injection_log_hist,
     }
     plot_all_figures(results)
 
