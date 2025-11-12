@@ -59,6 +59,7 @@ From the results in above figure, we can draw the following conclusions:
 - **Standard KF (Red)** as expected, the  performs poorly. After each collision, its deviates from the true state and then corrects very slowly, indicating poor tracking performance for a significant duration.
 - **Adaptive KF (black)** exhibits a noticeable lag and overshoot after collision, but still does a good job at tracking the true state.
 - **Targeted Injection KF (green)** corrects almost instantaneously without any overshoot, being faster than the Adaptive KF.
+- The Adaption Trigger subplot exhibits this instantaneous correction of TI-KF as compared to a slower correction for the Adaptive KF method.
 
 ## Repository Structure
 
