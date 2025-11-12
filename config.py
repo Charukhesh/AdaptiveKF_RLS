@@ -1,6 +1,6 @@
 import numpy as np
 
-# --- System & Simulation Parameters ---
+# System & Simulation Parameters
 # Physical Parameters
 m = 10.0
 k = 5.0
@@ -53,6 +53,8 @@ lambda_min = 0.5
 lambda_max = 1.0
 eps = 1e-6
 
+
+# Targeted Injection KF Parameters
 RESET_INNOVATION_THRESHOLD = 9.0
 VELOCITY_UNCERTAINTY_INJECTION = 0.1
 Q_INJECTION_MATRIX = np.array([

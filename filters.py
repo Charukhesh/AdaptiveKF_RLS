@@ -77,14 +77,13 @@ class TargetedInjectionKF(StandardKF):
         self.injection_log = []
 
     def update(self, y_k):
-        # 1. Calculate innovation and check for outliers (same as before)
         innovation = y_k - cfg.Ck @ self.x_hat
         S_k = cfg.Ck @ self.P @ cfg.Ck.T + cfg.R_k
         S_k_inv = np.linalg.inv(S_k)
         
         d_squared = innovation.T @ S_k_inv @ innovation
         
-        # 2. Implement the *TARGETED* action
+        # Implementing the 'TARGETED' action
         if float(d_squared) > cfg.RESET_INNOVATION_THRESHOLD:
             # Instead of a full reset, just add to the current P
             self.P = self.P + cfg.Q_INJECTION_MATRIX
@@ -92,7 +91,6 @@ class TargetedInjectionKF(StandardKF):
         else:
             self.injection_log.append(0)
 
-        # 3. Perform the standard Kalman update
         K_k = self.P @ cfg.Ck.T @ S_k_inv
         self.x_hat = self.x_hat + K_k @ innovation
         self.P = (np.eye(cfg.n_states) - K_k @ cfg.Ck) @ self.P

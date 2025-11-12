@@ -27,6 +27,7 @@ def plot_all_figures(results):
     axes2[2].plot(t_span, lambda_k, 'm-', label='λk (KF*)')
     axes2[2].stem(t_span, injection_log, linefmt='g-', markerfmt='go', basefmt=" ", label='Injection Trigger (TI-KF)')
     axes2[2].set_ylabel('Adaptation Trigger'); axes2[2].set_xlabel('Time (s)'); axes2[2].legend(); axes2[2].grid(True);
+    plt.savefig("./figures/State_Estimation_and_Forgetting_Factor.png") 
 
     # Estimation Error
     error_kf, error_kfs, error_tikf = x_true - x_kf, x_true - x_kfs, x_true - x_tikf
@@ -43,6 +44,7 @@ def plot_all_figures(results):
     axes3[1].plot(t_span, error_kfs[1, :], 'b-', label='KF* Error')
     axes3[1].plot(t_span, error_tikf[1, :], 'g-.', label='TI-KF (Targeted)')
     axes3[1].set_ylabel('Velocity Error'); axes3[1].set_xlabel('Time (s)'); axes3[1].legend(); axes3[1].grid(True); axes3[1].set_ylim(-2, 2)
+    plt.savefig("./figures/Estimation_Error.png")
 
     # Marginal Variance
     var_z_kf = P_kf[:, 0, 0]; var_zdot_kf = P_kf[:, 1, 1]
@@ -59,6 +61,7 @@ def plot_all_figures(results):
     axes4[1].plot(t_span, var_zdot_kfs, 'b-', label='KF*')
     axes4[1].plot(t_span, P_tikf[:, 1, 1], 'g-.', label='TI-KF')
     axes4[1].set_ylabel('σ_ż^2 (Velocity)'); axes4[1].set_xlabel('Time (s)'); axes4[1].legend(); axes4[1].grid(True); axes4[1].set_ylim(0, 0.16)
-
+    plt.savefig("./figures/Marginal_Variance.png")
+    
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.show()
